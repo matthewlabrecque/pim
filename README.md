@@ -4,6 +4,9 @@ Like most other programmers, I fell in love with Mario's Pi coding agent, but as
 
 The result was "pim", which totally isn't borrowed from another project...
 
+### The Problem
+Pi's biggest issue is there's a set of plugins it seems everyone ends up setting up/deploying, but there's no standardization of these plugins at all. You're simply expected to utilize the "make an extension" prompt which doesn't standardize anything and introduces the possibiltiy of a vibe coded nightmare.
+
 ### Installation
 
 Pim does require an existing installation of Pi in order to work, as well as Python3:
