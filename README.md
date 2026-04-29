@@ -1,27 +1,28 @@
 # pim - Pi IMproved
 
-Like most other programmers, I fell in love with Mario's Pi coding agent, but as I began using it I discovered several serious security issues. Not the least of which was how it had full access to a system it was installed on. Because of this, I wanted to write a wrapper for Pi which would not only scope-limit Pi to the directory it was working on, but would flag any write/remove attempts by the agent, while still keeping that "we only ship the barebones" mentality of Pi.
+pim is a Python wrapper script which seeks to do one thing: Improve the security of the Pi.dev agentic coding agent.
 
-The result was "pim", which totally isn't borrowed from another project...
+### The problem
 
-### The Problem
-Pi's biggest issue is there's a set of plugins it seems everyone ends up setting up/deploying, but there's no standardization of these plugins at all. You're simply expected to utilize the "make an extension" prompt which doesn't standardize anything and introduces the possibiltiy of a vibe coded nightmare.
+I love using Pi.dev for helping me write scripts and other small programming projects, but there's one massive issue with it. By default, Pi runs with the same user permissions as the calling user, which is a security nightmare as these coding agents have the potential to nuke filesystems, or even worse leak your ssh keys on the internet. I don't blame Mario for this, he made it clear that he wanted to only ship the barebones, but that's where we have to come in and create our own solutions.
 
-### Installation
+### What is pim?
 
-Pim does require an existing installation of Pi in order to work, as well as Python3:
+Pim hardens Pi by doing the following:
+
+1) Sandboxes the agent from the kernel
+2) Makes all filesystems read only by default except the working directory, Pi's own configuration directory (~/.pi), and /tmp
+3) Hides .ssh from the filesystem meaning your keys are safe from being leaked in an LLM surface vector attack
+4) Rejects Pi's permissions to use `sudo`
+5) Performs a prompt injection into Pi's master prompt which means Pi knows its read only except the working directory, and will tell the user
+6) Will ask for permission before performing any sort of `rm` operation
+
+### How to install pim
+
+Currently, pim is Linux only and required an existing installation of Pi as well as the `seccomp` and `bubblewrap` packages:
 
 ```bash
-git clone https://github.com/matthewlabrecque/pim.git $USER/bin
-rm -rf $USER/bin/pim/.git
+git clone https://github.com/matthewlabrecque/pim.git
+cd pim
+cp pim.py ~/.local/bin/pim
 ```
-
-### Operation
-
-By default pim will limit the write scope of Pi to the working directory, as well as Pi's local files and /tmp
-
-```bash
-pim
-```
-
-Next up is to allow Pim to talk directly with Pi and tell it when it's not in scope
